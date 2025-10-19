@@ -1,0 +1,23 @@
+{
+  "name": "Погода в Казахстане",
+  "short_name": "Погода KZ",
+  "description": "Современный погодный сайт с графиками, картой и прогнозом по Казахстану.",
+  "lang": "ru",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d1117",
+  "theme_color": "#f5a623",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "img/weather-icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "img/weather-icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

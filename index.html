@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Погода в Казахстане</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0d1117">
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(() => console.log('✅ Service Worker зарегистрирован'))
+        .catch(err => console.error('❌ Ошибка Service Worker:', err));
+    });
+  }
+</script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- для графика -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" /> <!-- для карты -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <link rel="icon" href="img/weather-icon.png" type="image/x-icon">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Погода в Казахстане</h1>
+
+    <!-- поиск города -->
+    <div class="search">
+      <input type="text" id="cityInput" placeholder="Введите город" />
+      <button id="showWeatherBtn">Показать</button>
+    </div>
+
+    <!-- лоадер -->
+    <div id="loader" class="loader hidden">
+      <div class="spinner"></div>
+      <p>Загрузка данных...</p>
+    </div>
+
+    <!-- кнопки переключения дней -->
+    <div class="day-nav" id="dayNav"></div>
+
+    <!-- таблица с погодой -->
+    <table id="weatherTable" class="hidden fade">
+      <thead>
+        <tr>
+          <th>Период</th>
+          <th>Погода</th>
+          <th>Температура</th>
+          <th>Ощущается как</th>
+          <th>Осадки</th>
+          <th>Давление</th>
+          <th>Ветер</th>
+          <th>Влажность</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+
+    <!-- блок с дополнительной информацией -->
+    <div class="info" id="extraInfo"></div>
+
+    <!-- кнопки переключения графиков -->
+    <div class="chart-toggle">
+      <button id="tempChartBtn" class="active">Температура</button>
+      <button id="feelsChartBtn">Ощущается</button>
+    </div>
+
+    <button id="installBtn" class="install-btn hidden">📲 Установить приложение</button>
+
+<script>
+let deferredPrompt;
+const installBtn = document.getElementById("installBtn");
+
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.classList.remove("hidden");
+
+  installBtn.addEventListener("click", () => {
+    installBtn.classList.add("hidden");
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === "accepted") {
+        console.log("✅ Установка подтверждена");
+      } else {
+        console.log("❌ Установка отменена");
+      }
+      deferredPrompt = null;
+    });
+  });
+});
+</script>
+
+    <!-- карта -->
+    <div class="map" id="map"></div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
