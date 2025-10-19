@@ -69,28 +69,51 @@
     <button id="installBtn" class="install-btn hidden">📲 Установить приложение</button>
 
 <script>
-let deferredPrompt;
 const installBtn = document.getElementById("installBtn");
+let deferredPrompt;
 
-window.addEventListener("beforeinstallprompt", (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  installBtn.classList.remove("hidden");
+// Проверка: мобильное устройство?
+const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-  installBtn.addEventListener("click", () => {
-    installBtn.classList.add("hidden");
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then((choiceResult) => {
-      if (choiceResult.outcome === "accepted") {
-        console.log("✅ Установка подтверждена");
-      } else {
-        console.log("❌ Установка отменена");
-      }
-      deferredPrompt = null;
+if (isMobile) {
+  // Для Android (поддерживает beforeinstallprompt)
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.classList.remove("hidden");
+
+    installBtn.addEventListener("click", () => {
+      installBtn.classList.add("hidden");
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === "accepted") {
+          console.log("✅ Установка подтверждена");
+        } else {
+          console.log("❌ Установка отменена");
+        }
+        deferredPrompt = null;
+      });
     });
   });
-});
+
+  // Для iOS — нет beforeinstallprompt
+  const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const isInStandaloneMode = ("standalone" in window.navigator) && window.navigator.standalone;
+
+  if (isIOS && !isInStandaloneMode) {
+    // Покажем подсказку пользователю
+    installBtn.classList.remove("hidden");
+    installBtn.textContent = "📲 Добавить на экран";
+    installBtn.addEventListener("click", () => {
+      alert("На iPhone: нажмите «Поделиться» → «Добавить на экран»");
+    });
+  }
+} else {
+  // На ПК кнопку не показываем
+  installBtn.remove();
+}
 </script>
+
 
     <!-- карта -->
     <div class="map" id="map"></div>
